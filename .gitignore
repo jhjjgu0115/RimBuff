@@ -39,7 +39,8 @@ local.properties
 # User-specific files
 *.suo
 *.user
-*.sln.docstates
+.sln.docstates
+.vs
 
 # Build results
 
