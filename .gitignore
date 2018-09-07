@@ -18,6 +18,7 @@
 *.a
 *.lib
 
+
 # Executables
 *.exe
 *.out
@@ -248,7 +249,7 @@ UpgradeLog*.htm
 # SQL Server files
 *.mdf
 *.ldf
-
+.vs/
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
