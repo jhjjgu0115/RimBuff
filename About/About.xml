@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<ModMetaData>
-	<name>RimBuff</name>
-	<author>NukaFrog</author>
-	<targetVersion>0.19.1987</targetVersion>
-	<url/>
-	<description>This provides the function so that it can express the dynamic state change of the object.</description>
-</ModMetaData>
