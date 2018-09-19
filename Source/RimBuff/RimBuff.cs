@@ -64,6 +64,16 @@ namespace RimBuff
                     Log.Error("BuffList is Null");
                 }
             }
+            try
+            {
+                BuffManagerController.CompBuffList.Add(this);
+                Log.Message("ah1");
+            }
+            catch
+            {
+                Log.Message("ah2");
+            }
+            
 
         }
       
@@ -465,6 +475,62 @@ namespace RimBuff
         public int innerElapseTick = 0;
     }
 
+    public class BuffManagerController : Thing
+    {
+        private static BuffManagerController instance;
+        private static List<CompBuffManager> compBuffList = new List<CompBuffManager>();
+        public static List<CompBuffManager> CompBuffList
+        {
+            get
+            {
+                if(compBuffList==null)
+                {
+                    compBuffList = new List<CompBuffManager>();
+                }
+                return compBuffList;
+            }
+        }
+        public static BuffManagerController Instance
+        {
+            get
+            {
+                if(instance==null)
+                {
+                    instance = new BuffManagerController();
+                    try
+                    {
+                        instance.def.tickerType = TickerType.Normal;
+                    }
+                    catch
+                    {
+                        Log.Message("def null");
+                    }
+                    
+                    Find.TickManager.RegisterAllTickabilityFor(instance);
+                }
+                return instance ?? (instance = new BuffManagerController());
+            }
+        }
 
+        public override void SpawnSetup(Map map, bool respawningAfterLoad)
+        {
+
+        }
+        public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+        {
+
+        }
+        public override string LabelCap { get; }
+        public override string Label { get; }
+        public override void Tick()
+        {
+            base.Tick();
+            Log.Message("ha");
+            for (int index=0;index<compBuffList.Count;index++)
+            {
+                Log.Message(compBuffList[index].parent.Label);
+            }
+        }
+    }
 
 }
