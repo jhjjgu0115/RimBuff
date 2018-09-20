@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Verse;
 using RimWorld;
+using Harmony;
+using System.Reflection;
 
 
 namespace RimBuff
@@ -27,6 +29,11 @@ namespace RimBuff
             {
                 buffList = new List<Buff>();
             }
+            BuffController.CompList.Add(this);
+        }
+        ~CompBuffManager()
+        {
+            BuffController.CompList.Remove(this);
         }
         #endregion
 
@@ -45,7 +52,7 @@ namespace RimBuff
         #endregion
 
         #region Public Methods
-        public override void CompTick()
+        public void Tick()
         {
             try
             {
@@ -64,17 +71,6 @@ namespace RimBuff
                     Log.Error("BuffList is Null");
                 }
             }
-            try
-            {
-                BuffManagerController.CompBuffList.Add(this);
-                Log.Message("ah1");
-            }
-            catch
-            {
-                Log.Message("ah2");
-            }
-            
-
         }
       
         public void AddBuff(Buff buff)
@@ -475,62 +471,49 @@ namespace RimBuff
         public int innerElapseTick = 0;
     }
 
-    public class BuffManagerController : Thing
+    [StaticConstructorOnStartup]
+    public static class RimBuffPatch
     {
-        private static BuffManagerController instance;
-        private static List<CompBuffManager> compBuffList = new List<CompBuffManager>();
-        public static List<CompBuffManager> CompBuffList
+        static RimBuffPatch()
         {
-            get
-            {
-                if(compBuffList==null)
-                {
-                    compBuffList = new List<CompBuffManager>();
-                }
-                return compBuffList;
-            }
-        }
-        public static BuffManagerController Instance
-        {
-            get
-            {
-                if(instance==null)
-                {
-                    instance = new BuffManagerController();
-                    try
-                    {
-                        instance.def.tickerType = TickerType.Normal;
-                    }
-                    catch
-                    {
-                        Log.Message("def null");
-                    }
-                    
-                    Find.TickManager.RegisterAllTickabilityFor(instance);
-                }
-                return instance ?? (instance = new BuffManagerController());
-            }
-        }
-
-        public override void SpawnSetup(Map map, bool respawningAfterLoad)
-        {
-
-        }
-        public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
-        {
-
-        }
-        public override string LabelCap { get; }
-        public override string Label { get; }
-        public override void Tick()
-        {
-            base.Tick();
-            Log.Message("ha");
-            for (int index=0;index<compBuffList.Count;index++)
-            {
-                Log.Message(compBuffList[index].parent.Label);
-            }
+            HarmonyInstance harmonyInstance = HarmonyInstance.Create("com.RimBuffPatch.rimworld.mod");
+            harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
         }
     }
+    [HarmonyPatch(typeof(TickManager)), HarmonyPatch("DoSingleTick")]
+    internal class BuffControllerPatch
+    {
+        static bool Prefix()
+        {
+            BuffController.Tick();
+            return true;
+        }
+    }
+
+    public static class BuffController
+    {
+        private static List<CompBuffManager> compList = new List<CompBuffManager>();
+        public static List<CompBuffManager> CompList
+        {
+            get
+            {
+                if(compList==null)
+                {
+                    compList = new List<CompBuffManager>();
+                }
+                return compList;
+            }
+        }
+
+        public static void Tick()
+        {
+            for(int index=0;index<compList.Count;index++)
+            {
+                compList[index].Tick();
+            }
+        }
+
+    }
+
 
 }
