@@ -255,7 +255,7 @@ namespace RimBuff
                         buffList = new List<Buff>();
                         Log.Message("BuffList is null. Auto Create New BuffList");
                     }
-                    for (int i = 0; i < this.buffList.Count; i++)
+                    for(int i = 0; i < this.buffList.Count; i++)
                     {
                         if (this.buffList[i] != null)
                         {
@@ -443,6 +443,7 @@ namespace RimBuff
             try
             {
                 Scribe_Defs.Look<BuffDef>(ref def, "buffDef");
+                Scribe_Values.Look<string>(ref buffName, "buffName");
                 Scribe_References.Look<ThingWithComps>(ref caster, "caster");
                 Scribe_References.Look<ThingWithComps>(ref target, "target");
 
@@ -497,7 +498,7 @@ namespace RimBuff
         {
             get
             {
-                if(compList==null)
+                if (compList == null)
                 {
                     compList = new List<CompBuffManager>();
                 }
