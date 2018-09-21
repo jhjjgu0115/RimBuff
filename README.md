@@ -3,8 +3,9 @@
 
 림버프는 림월드에 버프기능을 추가해주는 모드입니다.
 
-ThingWithComp에 CompBuff를 추가하여 개체에 대한 동적 상태변화를 표현할 수 있게 해줍니다.
+ThingWithComp에 CompBuff를 추가하여 개체에 대한 동적 상태변화를 표현할 수 있게 해줍니다.  
 
+CompBuffManager는 다음과 같은 기능들을 제공합니다.  
 
 ### 버프 추가
 * 새 버프 추가
