@@ -73,6 +73,14 @@ namespace RimBuff
             }
         }
       
+        //버프 생성
+        public Buff CreateBuff()
+        {
+            Buff buff = new Buff();
+            BuffList.Add(buff);
+            return buff;
+        }
+        //버프 추가
         public void AddBuff(Buff buff)
         {
             try
@@ -86,6 +94,7 @@ namespace RimBuff
                 Log.Error("Buff.AddBuff(" + buff + ") Error");
             }
         }
+        //버프 삭제
         public void RemoveBuff(string buffName)
         {
             try
@@ -108,16 +117,31 @@ namespace RimBuff
                 Log.Error("Buff.Remove(" + def.defName + ") Error");
             }
         }
-        public void RemoveBuffAll(BuffDef def)
+        public void RemoveBuff(ThingWithComps target, TargetType targetType)
         {
-            try
+            if (target == null)
             {
-                buffList.RemoveAll(buff => buff.def == def);
+                Log.Error(parent.ToString() + " RemoveBuff - Can't Find Buff: Cause target is Empty ");
             }
-            catch
+            else
             {
-                Log.Error("Buff.RemoveBuffAll(" + def.defName + ") Error");
+                try
+                {
+                    if (targetType == TargetType.Caster)
+                    {
+                        buffList.Remove(buffList.Find(buff => buff.Caster == target));
+                    }
+                    else if (targetType == TargetType.Target)
+                    {
+                        buffList.Remove(buffList.Find(buff => buff.Target == target));
+                    }
+                }
+                catch
+                {
+                    Log.Error("RemoveBuff With target Error");
+                }
             }
+
         }
         public void RemoveBuffAll(string buffName)
         {
@@ -129,6 +153,43 @@ namespace RimBuff
             {
                 Log.Error("Buff.RemoveBuffAll(" + buffName + ") Error");
             }
+        }
+        public void RemoveBuffAll(BuffDef def)
+        {
+            try
+            {
+                buffList.RemoveAll(buff => buff.def == def);
+            }
+            catch
+            {
+                Log.Error("Buff.RemoveBuffAll(" + def.defName + ") Error");
+            }
+        }
+        public void RemoveBuffAll(ThingWithComps target, TargetType targetType)
+        {
+            if (target == null)
+            {
+                Log.Error(parent.ToString() + " RemoveBuff - Can't Find Buff: Cause target is Empty ");
+            }
+            else
+            {
+                try
+                {
+                    if (targetType == TargetType.Caster)
+                    {
+                        buffList.RemoveAll(buff => buff.Caster == target);
+                    }
+                    else if (targetType == TargetType.Target)
+                    {
+                        buffList.RemoveAll(buff => buff.Target == target);
+                    }
+                }
+                catch
+                {
+                    Log.Error("RemoveBuffAll With target Error");
+                }
+            }
+
         }
         public void RemoveBuffAll()
         {
@@ -142,7 +203,7 @@ namespace RimBuff
             }
         }
 
-
+        //버프 확인
         public bool ContainBuff(Buff buff)
         {
             return buffList.Contains(buff);
@@ -164,6 +225,32 @@ namespace RimBuff
             return false;
         }
 
+        //버프 검색
+        public Buff FindBuff(Buff targetBuff)
+        {
+            if (targetBuff == null)
+            {
+                Log.Error(parent.ToString() + " Can't Find Buff: Cause buff is Empty ");
+                return default(Buff);
+            }
+            return buffList.Find(buff => buff == targetBuff);
+        }
+        public Buff FindBuff(string buffName)
+        {
+            try
+            {
+                if (buffName == null)
+                {
+                    Log.Error(parent.ToString() + " Can't Find Buff: Cause buffName is Empty ");
+                }
+                return buffList.Find(buff => buff.BuffName == buffName);
+            }
+            catch
+            {
+                Log.Error("FindBuff With buffName Error");
+                return default(Buff);
+            }
+        }
         public Buff FindBuff(BuffDef def)
         {
             try
@@ -198,22 +285,6 @@ namespace RimBuff
                 return default(Buff);
             }
         }
-        public Buff FindBuff(string buffName)
-        {
-            try
-            {
-                if (buffName == null)
-                {
-                    Log.Error(parent.ToString() + " Can't Find Buff: Cause buffName is Empty ");
-                }
-                return buffList.Find(buff => buff.BuffName == buffName);
-            }
-            catch
-            {
-                Log.Error("FindBuff With buffName Error");
-                return default(Buff);
-            }
-        }
         public Buff FindBuff(ThingWithComps target, TargetType targetType)
         {
             if (target == null)
@@ -241,6 +312,85 @@ namespace RimBuff
             }
             return default(Buff);
         }
+
+        public List<Buff> FindBuffAll(string buffName)
+        {
+            try
+            {
+                if (buffName == null)
+                {
+                    Log.Error(parent.ToString() + " Can't Find Buff: Cause buffName is Empty ");
+                }
+                return buffList.FindAll(buff => buff.BuffName == buffName);
+            }
+            catch
+            {
+                Log.Error("FindBuff With buffName Error");
+                return default(List<Buff>);
+            }
+        }
+        public List<Buff> FindBuffAll(BuffDef def)
+        {
+            try
+            {
+                if (def == null)
+                {
+                    Log.Error(parent.ToString() + " Can't Find Buff: Cause def is Empty ");
+                }
+                if (buffList.Count > 0)
+                {
+                    foreach (Buff buff in buffList)
+                    {
+                        if (buff == null)
+                        {
+                            Log.Message("This buff is Null");
+                        }
+                    }
+                }
+                try
+                {
+                    return buffList.FindAll(buff => buff.def == def);
+                }
+                catch
+                {
+                    return default(List<Buff>);
+                }
+
+            }
+            catch
+            {
+                Log.Error("FindBuff With Def Error");
+                return default(List<Buff>);
+            }
+        }
+        public List<Buff> FindBuffAll(ThingWithComps target, TargetType targetType)
+        {
+            if (target == null)
+            {
+                Log.Error(parent.ToString() + " Can't Find Buff: Cause target is Empty ");
+            }
+            else
+            {
+                try
+                {
+                    if (targetType == TargetType.Caster)
+                    {
+                        return buffList.FindAll(buff => buff.Caster == target);
+                    }
+                    else if (targetType == TargetType.Target)
+                    {
+                        return buffList.FindAll(buff => buff.target == target);
+                    }
+                    return default(List<Buff>);
+                }
+                catch
+                {
+                    Log.Error("FindBuff With target Error");
+                }
+            }
+            return default(List<Buff>);
+        }
+
 
         public override void PostExposeData()
         {       
