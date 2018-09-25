@@ -665,6 +665,4 @@ namespace RimBuff
         }
 
     }
-
-
 }
