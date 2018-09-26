@@ -1,5 +1,6 @@
-# RimBuff
-
+<p align="center">
+    <img src="https://github.com/jhjjgu0115/RimBuff/blob/master/About/Preview.png" alt="JecsTools" />
+</p>
 
 림버프는 림월드에 버프기능을 추가해주는 모드입니다.
 
