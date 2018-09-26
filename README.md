@@ -1,6 +1,14 @@
 <p align="center">
     <img src="https://github.com/jhjjgu0115/RimBuff/blob/master/About/Preview.png" alt="JecsTools" />
 </p>
+<p align="center">
+  <a href="https://github.com/jhjjgu0115/RimBuff/releases">
+    <img src="https://img.shields.io/badge/release-0.1-4BC51D.svg?style=flat" alt="v0.1" />
+  </a>
+  <a href="https://github.com/jhjjgu0115/RimBuff/wiki">
+    <img src="https://img.shields.io/badge/documentation-Wiki-4BC51D.svg?style=flat" alt="Documentation" />
+  </a>
+</p>
 
 림버프는 림월드에 버프기능을 추가해주는 모드입니다.
 
