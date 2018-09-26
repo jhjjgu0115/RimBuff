@@ -3,10 +3,10 @@
 </p>
 <p align="center">
   <a href="https://github.com/jhjjgu0115/RimBuff/releases">
-    <img src="https://img.shields.io/badge/release-0.1-4BC51D.svg?style=flat" alt="v0.1" />
+    <img src="https://img.shields.io/badge/release-v0.1-0066cc.svg?style=flat" alt="v0.1" />
   </a>
   <a href="https://github.com/jhjjgu0115/RimBuff/wiki">
-    <img src="https://img.shields.io/badge/documentation-Wiki-4BC51D.svg?style=flat" alt="Documentation" />
+    <img src="https://img.shields.io/badge/documentation-Wiki-cc0303.svg?style=flat" alt="Documentation" />
   </a>
 </p>
 
