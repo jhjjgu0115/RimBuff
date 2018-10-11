@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using Verse;
@@ -12,43 +12,45 @@ namespace RimBuff
     public class Buff : IExposable
     {
         #region Fields
-        public BuffDef def;
-        protected string name = string.Empty;
-        protected string uniqueName = string.Empty;
+        protected BuffDef def;
         protected string uniqueID = string.Empty;
+
         protected ThingWithComps caster = null;
         protected CompBuffManager owner = null;
-        protected ThingWithComps target;
 
-        protected int maxLevel = 0;
+        protected bool canDespell = true;
+
+        protected int maxSpellLevel = 0;
+        protected int maxOverlapLevel = 0;
         protected int duration = 0;
-        protected int innerElapseTick = 0;
+        protected int repeatCycle = 0;
 
-        protected int currentLevel = 0;
+        protected int currentSpellLevel = 0;
+        protected int currentOverlapLevel = 0;
         protected int currentDuration = 0;
-        protected int currentInnerElapseTick = 0;
-        #endregion
-
-        #region Constructors
-        public Buff()
-        {
-            uniqueID = "needBuffName" + GetHashCode();
-        }
-        #endregion
+        protected int currentRepeatCycle = 0;
+        #endregion   
 
         #region Properties
-        public string UniqueName
+        public BuffDef Def
         {
             get
             {
-                return uniqueName;
+                return def;
             }
         }
-        public string Name
+        public string DefName
         {
             get
             {
-                return name;
+                return def.defName;
+            }
+        }
+        public string Label
+        {
+            get
+            {
+                return def.label;
             }
         }
         public string UniqueID
@@ -58,6 +60,7 @@ namespace RimBuff
                 return uniqueID;
             }
         }
+
         public ThingWithComps Caster
         {
             get
@@ -67,17 +70,6 @@ namespace RimBuff
             set
             {
                 caster = value;
-            }
-        }
-        public ThingWithComps Target
-        {
-            get
-            {
-                return target;
-            }
-            set
-            {
-                target = value;
             }
         }
         public CompBuffManager Owner
@@ -91,11 +83,36 @@ namespace RimBuff
                 owner = value;
             }
         }
-        public int MaxLevel
+
+        public bool CanDespell
         {
             get
             {
-                return maxLevel;
+                return canDespell;
+            }
+        }
+
+        public int MaxSpellLevel
+        {
+            get
+            {
+                return maxSpellLevel;
+            }
+        }
+        public int MaxOverlapLevel
+        {
+            get
+            {
+                return currentOverlapLevel;
+            }
+            set
+            {
+                if (value < currentOverlapLevel)
+                {
+                    currentOverlapLevel = value;
+                }
+                maxOverlapLevel = value;
+
             }
         }
         public int Duration
@@ -105,28 +122,49 @@ namespace RimBuff
                 return duration;
             }
         }
-        public int InnerElapseTick
+        public int RepeatCycle
         {
             get
             {
-                return innerElapseTick;
+                return repeatCycle;
             }
         }
 
-        public int CurrentLevel
+        public int CurrentSpellLevel
         {
             get
             {
-                return currentLevel;
-
+                return currentSpellLevel;
             }
             set
             {
-                currentLevel = value;
-                if (currentLevel >= maxLevel)
+                if (value < maxSpellLevel)
                 {
-                    currentLevel = maxLevel;
+                    currentSpellLevel = value;
                 }
+                else
+                {
+                    currentSpellLevel = maxSpellLevel;
+                }
+            }
+        }
+        public int CurrentOverlapLevel
+        {
+            get
+            {
+                return currentOverlapLevel;
+            }
+            set
+            {
+                if (value < maxOverlapLevel)
+                {
+                    currentOverlapLevel = value;
+                }
+                else
+                {
+                    currentOverlapLevel = maxOverlapLevel;
+                }
+
             }
         }
         public int CurrentDuration
@@ -137,31 +175,88 @@ namespace RimBuff
 
             }
         }
-        public int CurrentInnerElapseTick
+        public int CurrentRepeatCycle
         {
             get
             {
-                return currentInnerElapseTick;
+                return currentRepeatCycle;
 
             }
         }
-        #endregion
+#endregion
 
-        #region protected Methods
+        #region Constructors
+        public Buff ()
+        {
+            uniqueID = "NeedDefName" + "_" + GetHashCode();
+        }
+        public Buff(BuffDef buffDef)
+        {
+            def = buffDef;
+            uniqueID = def.defName + "_" + GetHashCode();
+            
+            canDespell = buffDef.canDespell;
 
+            caster = null;
 
+            maxSpellLevel = buffDef.maxSpellLevel;
+            maxOverlapLevel = buffDef.maxOverlapLevel;
+            duration = GenTicks.SecondsToTicks(buffDef.duration);
+            repeatCycle = GenTicks.SecondsToTicks(buffDef.duration);
+        }
+        public Buff(BuffDef buffDef,ThingWithComps caster)
+        {
+            def = buffDef;
+            uniqueID = def.defName+"_"+ GetHashCode();
+
+            canDespell = buffDef.canDespell;
+
+            this.caster = caster;
+
+            maxSpellLevel = buffDef.maxSpellLevel;
+            maxOverlapLevel = buffDef.maxOverlapLevel;
+            duration = GenTicks.SecondsToTicks(buffDef.duration);
+            repeatCycle = GenTicks.SecondsToTicks(buffDef.duration);
+        }
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// basically If the Level changes, refresh.
+        /// </summary>
+        /// <param name="level"></param>
         public virtual void AddLevel(int level)
         {
-            currentLevel += level;
-            if (currentLevel >= maxLevel)
-            {
-                currentLevel = maxLevel;
-            }
+            CurrentOverlapLevel += level;//나중에 음수값 패치 추가
             OnRefresh();
         }
+        public virtual void OnRefresh()
+        {
+
+        }
+
+        public virtual IEnumerator TickTest(int interval)
+        {
+            OnCreate();
+            while (currentDuration > duration)
+            {
+                currentDuration += interval;
+
+                if (currentRepeatCycle >= repeatCycle)
+                {
+                    OnIterate();
+                    currentRepeatCycle = 0;
+                }
+                else
+                {
+                    currentRepeatCycle += interval;
+                }
+                yield return null;
+            }
+            OnDurationExpire();
+            
+        }//test
+        /*
         public virtual void Tick(int interval)
         {
             if (currentDuration >= duration)
@@ -172,23 +267,18 @@ namespace RimBuff
             {
                 currentDuration += interval;
             }
-            if (currentInnerElapseTick >= innerElapseTick)
+            if (currentRepeatCycle >= repeatCycle)
             {
                 OnIterate();
-                currentInnerElapseTick = 0;
+                currentRepeatCycle = 0;
             }
             else
             {
-                currentInnerElapseTick += interval;
+                currentRepeatCycle += interval;
             }
-        }
+        }*/
         public virtual void OnCreate()
         {
-
-        }
-        public virtual void OnRefresh()
-        {
-
         }
         public virtual void OnDestroy()
         {
@@ -196,36 +286,37 @@ namespace RimBuff
 
         public virtual void OnIterate()
         {
-
         }
+        /// <summary>
+        /// Basically when duration expires, the buff is destroyed.
+        /// </summary>
         public virtual void OnDurationExpire()
         {
-
+            Owner.RemoveBuff(this);
         }
 
         public virtual void ExposeData()
         {
             try
             {
-                Scribe_Defs.Look<BuffDef>(ref def, "buffDef");
-
-                Scribe_Values.Look<string>(ref name, "name");
-                Scribe_Values.Look<string>(ref uniqueName, "uniqueName");
+                Scribe_Defs.Look<BuffDef>(ref def, "def");
                 Scribe_Values.Look<string>(ref uniqueID, "uniqueID");
+
                 Scribe_References.Look<ThingWithComps>(ref caster, "caster");
-                Scribe_References.Look<ThingWithComps>(ref target, "target");
 
-                Scribe_Values.Look<int>(ref maxLevel, "maxLevel");
+                Scribe_Values.Look<int>(ref maxSpellLevel, "maxLevel");
+                Scribe_Values.Look<int>(ref maxOverlapLevel, "maxOverlapCount");
                 Scribe_Values.Look<int>(ref duration, "duration");
-                Scribe_Values.Look<int>(ref innerElapseTick, "innerElapseTick");
+                Scribe_Values.Look<int>(ref repeatCycle, "repeatCycle");
 
-                Scribe_Values.Look<int>(ref currentLevel, "currentLevel");
+                Scribe_Values.Look<int>(ref currentSpellLevel, "currentLevel");
+                Scribe_Values.Look<int>(ref currentOverlapLevel, "currentOverlapCount");
                 Scribe_Values.Look<int>(ref currentDuration, "currentDuration");
-                Scribe_Values.Look<int>(ref currentInnerElapseTick, "currentInnerElapseTick");
+                Scribe_Values.Look<int>(ref currentRepeatCycle, "currentRepeatCycle");
             }
-            catch
+            catch (Exception ee)
             {
-                Log.Error("Buff.ExposeData() Error");
+                Log.Error("Error : " + ee.ToString());
             }
         }
         #endregion

@@ -11,8 +11,15 @@ namespace RimBuff
 {
     public class BuffDef : Def
     {
-        public int maxLevel = 0;
-        public int duration = 0;
-        public int innerElapseTick = 0;
+        internal Type buffClass = typeof(Buff);
+
+        public bool isVisualze = false;
+        public bool canDespell=true;
+        public List<string> tagList=new List<string>();
+
+        public int maxSpellLevel = 0;
+        public int maxOverlapLevel = 0;
+        public float duration = 0;
+        public float repeatCycle = 0;
     }
 }
