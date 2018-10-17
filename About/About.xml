@@ -2,7 +2,7 @@
 <ModMetaData>
 	<name>RimBuff</name>
 	<author>NukaFrog</author>
-	<targetVersion>0.19.0</targetVersion>
-	<url/>
+	<targetVersion>1.0.0</targetVersion>
+	<url>https://github.com/jhjjgu0115/RimBuff</url>
 	<description>This provides the function so that it can express the dynamic state change of the object.</description>
 </ModMetaData>

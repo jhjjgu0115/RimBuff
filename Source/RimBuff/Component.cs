@@ -46,13 +46,21 @@ namespace RimBuff
         #region Public Methods
         public void Tick()
         {
-            if (buffList.Count > 0)
+            try
             {
-                for (int index = 0; index < buffList.Count; index++)
+                if (buffList.Count > 0)
                 {
-                    buffList[index].TickTest(1).MoveNext();
+                    for (int index = 0; index < buffList.Count; index++)
+                    {
+                        buffList[index].TickTest(1).MoveNext();
+                    }
                 }
             }
+            catch (Exception ee)
+            {
+                Log.Error("Error : " + ee.ToString());
+            }
+
         }
 
         //버프 추가
