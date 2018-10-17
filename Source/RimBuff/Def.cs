@@ -17,7 +17,7 @@ namespace RimBuff
         public bool canDespell=true;
         public List<string> tagList=new List<string>();
 
-        public int maxSpellLevel = 0;
+        public int spellLevel = 0;
         public int maxOverlapLevel = 0;
         public float duration = 0;
         public float repeatCycle = 0;

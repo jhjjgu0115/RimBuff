@@ -180,7 +180,7 @@ namespace RimBuff
 
             caster = null;
 
-            spellLevel = buffDef.maxSpellLevel;
+            spellLevel = buffDef.spellLevel;
             maxOverlapLevel = buffDef.maxOverlapLevel;
             duration = GenTicks.SecondsToTicks(buffDef.duration);
             repeatCycle = GenTicks.SecondsToTicks(buffDef.duration);
@@ -194,7 +194,7 @@ namespace RimBuff
 
             this.caster = caster;
 
-            spellLevel = buffDef.maxSpellLevel;
+            spellLevel = buffDef.spellLevel;
             maxOverlapLevel = buffDef.maxOverlapLevel;
             duration = GenTicks.SecondsToTicks(buffDef.duration);
             repeatCycle = GenTicks.SecondsToTicks(buffDef.duration);
