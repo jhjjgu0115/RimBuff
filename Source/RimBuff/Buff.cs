@@ -20,12 +20,11 @@ namespace RimBuff
 
         protected bool canDespell = true;
 
-        protected int maxSpellLevel = 0;
+        protected int spellLevel = 0;
         protected int maxOverlapLevel = 0;
         protected int duration = 0;
         protected int repeatCycle = 0;
-
-        protected int currentSpellLevel = 0;
+        
         protected int currentOverlapLevel = 0;
         protected int currentDuration = 0;
         protected int currentRepeatCycle = 0;
@@ -92,11 +91,11 @@ namespace RimBuff
             }
         }
 
-        public int MaxSpellLevel
+        public int SpellLevel
         {
             get
             {
-                return maxSpellLevel;
+                return spellLevel;
             }
         }
         public int MaxOverlapLevel
@@ -130,24 +129,6 @@ namespace RimBuff
             }
         }
 
-        public int CurrentSpellLevel
-        {
-            get
-            {
-                return currentSpellLevel;
-            }
-            set
-            {
-                if (value < maxSpellLevel)
-                {
-                    currentSpellLevel = value;
-                }
-                else
-                {
-                    currentSpellLevel = maxSpellLevel;
-                }
-            }
-        }
         public int CurrentOverlapLevel
         {
             get
@@ -199,7 +180,7 @@ namespace RimBuff
 
             caster = null;
 
-            maxSpellLevel = buffDef.maxSpellLevel;
+            spellLevel = buffDef.maxSpellLevel;
             maxOverlapLevel = buffDef.maxOverlapLevel;
             duration = GenTicks.SecondsToTicks(buffDef.duration);
             repeatCycle = GenTicks.SecondsToTicks(buffDef.duration);
@@ -213,7 +194,7 @@ namespace RimBuff
 
             this.caster = caster;
 
-            maxSpellLevel = buffDef.maxSpellLevel;
+            spellLevel = buffDef.maxSpellLevel;
             maxOverlapLevel = buffDef.maxOverlapLevel;
             duration = GenTicks.SecondsToTicks(buffDef.duration);
             repeatCycle = GenTicks.SecondsToTicks(buffDef.duration);
@@ -304,12 +285,11 @@ namespace RimBuff
 
                 Scribe_References.Look<ThingWithComps>(ref caster, "caster");
 
-                Scribe_Values.Look<int>(ref maxSpellLevel, "maxLevel");
+                Scribe_Values.Look<int>(ref spellLevel, "spellLevel");
                 Scribe_Values.Look<int>(ref maxOverlapLevel, "maxOverlapCount");
                 Scribe_Values.Look<int>(ref duration, "duration");
                 Scribe_Values.Look<int>(ref repeatCycle, "repeatCycle");
-
-                Scribe_Values.Look<int>(ref currentSpellLevel, "currentLevel");
+                
                 Scribe_Values.Look<int>(ref currentOverlapLevel, "currentOverlapCount");
                 Scribe_Values.Look<int>(ref currentDuration, "currentDuration");
                 Scribe_Values.Look<int>(ref currentRepeatCycle, "currentRepeatCycle");
