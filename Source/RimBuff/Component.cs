@@ -92,6 +92,7 @@ namespace RimBuff
             }
             return default(Buff);
         }
+        
 
         //버프 삭제
         public void RemoveBuff(Buff buff)

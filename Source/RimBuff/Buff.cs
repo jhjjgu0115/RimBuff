@@ -206,7 +206,7 @@ namespace RimBuff
         /// basically If the Level changes, refresh.
         /// </summary>
         /// <param name="level"></param>
-        public virtual void AddLevel(int level)
+        public virtual void AddOverlapLevel(int level)
         {
             CurrentOverlapLevel += level;//나중에 음수값 패치 추가
             OnRefresh();
